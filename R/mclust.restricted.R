@@ -25,6 +25,8 @@
 #'  during the classification step. A clustering with all clusters of 
 #'  size less than \code{min.size} is not valid and clusters will be merged if 
 #'  this happens.
+#'  
+#' @param seed a single value for random number generator.
 #'   
 #' @importFrom mclust Mclust
 #' 
@@ -43,7 +45,9 @@
 
 
 
-mclustRestricted <- function(y, restrict=TRUE, min.size){
+mclustRestricted <- function(y, restrict=TRUE, min.size, seed=1){
+  set.seed(seed)
+  
   # add runif(-0.1,0.1) jitter if all y vals are identical
   if (length(unique(y))==1){
     y <- y + runif(length(y), -0.1, 0.1)
