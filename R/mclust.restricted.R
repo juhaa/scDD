@@ -62,8 +62,13 @@ mclustRestricted <- function(y, restrict=TRUE, min.size, seed=1){
     y <- y + runif(length(y), -0.1, 0.1)
     mc <- suppressWarnings(Mclust(y, warn=FALSE, modelNames=c("V"), G=1:5, 
                                   verbose=FALSE))
-    return(mc)
+    return(list(mc=mc, y=y))
   })
+  
+  if (class(mc) != "Mclust") {
+    y <- mc[["y"]]
+    mc <- mc[["mc"]]
+  }
   	
   cl <- mc$classification
   comps <- mc$G
