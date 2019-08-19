@@ -26,7 +26,8 @@
 #'  size less than \code{min.size} is not valid and clusters will be merged if 
 #'  this happens.
 #'  
-#' @param seed a single value for random number generator.
+#' @param seed a single value for the random number generator (used when/if
+#' calculating jitter).
 #'   
 #' @importFrom mclust Mclust
 #' 
@@ -53,8 +54,17 @@ mclustRestricted <- function(y, restrict=TRUE, min.size, seed=1){
     y <- y + runif(length(y), -0.1, 0.1)
   }
   
-  mc <- suppressWarnings(Mclust(y, warn=FALSE, modelNames=c("V"), G=1:5, 
-                                verbose=FALSE))	
+  mc <- tryCatch({
+    mc <- suppressWarnings(Mclust(y, warn=FALSE, modelNames=c("V"), G=1:5, 
+                                  verbose=FALSE))
+  }, error = function(e) {
+    # add runif(-0.1,0.1) jitter if numerical errors occur with Mclust
+    y <- y + runif(length(y), -0.1, 0.1)
+    mc <- suppressWarnings(Mclust(y, warn=FALSE, modelNames=c("V"), G=1:5, 
+                                  verbose=FALSE))
+    return(mc)
+  })
+  	
   cl <- mc$classification
   comps <- mc$G
   
