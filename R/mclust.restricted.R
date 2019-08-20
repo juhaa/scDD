@@ -30,7 +30,7 @@
 #' calculating jitter).
 #' 
 #' @param jitter Numeric vector of length two with minimum and maximum for
-#' jitter range (as in \code{runif(n, min = jitter[1], max = jitter[2])})
+#' jitter range (as in \code{runif(n, min = jitter[1], max = jitter[2])}).
 #'   
 #' @importFrom mclust Mclust
 #' 

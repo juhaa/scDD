@@ -125,6 +125,9 @@
 #' can only be set to FALSE if `permutations` is set to zero, since the full
 #' model fitting will automatically be carried out if permutations are run.
 #' 
+#' @param jitter Numeric vector of length two with minimum and maximum for
+#' jitter range (as in \code{runif(n, min = jitter[1], max = jitter[2])}).
+#' 
 #' @return A \code{SingleCellExperiment} object that contains the data and 
 #' sample information from the input object, but where the results objects
 #' are now added to the \code{metadata} slot. The metadata slot is now a
@@ -222,7 +225,8 @@ scDD <- function(SCdat,
                  parallelBy=c("Genes", "Permutations"),
                  condition="condition", min.size=3,
                  min.nonzero=NULL,
-                 level=0.05, categorize = TRUE){
+                 level=0.05, categorize = TRUE,
+                 jitter = c(-0.1, 0.1)){
   
   # check whether SCdat is a member of the SingleCellExperiment class
   if(!("SingleCellExperiment" %in% class(SCdat))){
@@ -328,9 +332,9 @@ scDD <- function(SCdat,
       cond0 <- colData(SCdat)[[condition]][y>0]
       y <- log(y[y>0])
       
-      oa <- mclustRestricted(y, restrict=TRUE, min.size=min.size)
-      c1 <- mclustRestricted(y[cond0==ref], restrict=TRUE, min.size=min.size)
-      c2 <- mclustRestricted(y[cond0!=ref], restrict=TRUE, min.size=min.size)
+      oa <- mclustRestricted(y, restrict=TRUE, min.size=min.size, jitter=jitter)
+      c1 <- mclustRestricted(y[cond0==ref], restrict=TRUE, min.size=min.size, jitter=jitter)
+      c2 <- mclustRestricted(y[cond0!=ref], restrict=TRUE, min.size=min.size, jitter=jitter)
     
       return(list(
         oa=oa,
@@ -374,9 +378,9 @@ scDD <- function(SCdat,
       cond0 <- colData(SCdat)[[condition]][y>0]
       y <- log(y[y>0])
       
-      oa <- mclustRestricted(y, restrict=TRUE, min.size=min.size)
-      c1 <- mclustRestricted(y[cond0==ref], restrict=TRUE, min.size=min.size)
-      c2 <- mclustRestricted(y[cond0!=ref], restrict=TRUE, min.size=min.size)
+      oa <- mclustRestricted(y, restrict=TRUE, min.size=min.size, jitter=jitter)
+      c1 <- mclustRestricted(y[cond0==ref], restrict=TRUE, min.size=min.size, jitter=jitter)
+      c2 <- mclustRestricted(y[cond0!=ref], restrict=TRUE, min.size=min.size, jitter=jitter)
       
       bf <- jointPosterior(y[cond0==ref], c1, alpha, m0, s0, a0, b0) + 
         jointPosterior(y[cond0!=ref], c2, alpha, m0, s0, a0, b0) 
