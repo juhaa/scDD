@@ -28,6 +28,9 @@
 #'  
 #' @param seed a single value for the random number generator (used when/if
 #' calculating jitter).
+#' 
+#' @param jitter Numeric vector of length two with minimum and maximum for
+#' jitter range (as in \code{runif(n, min = jitter[1], max = jitter[2])})
 #'   
 #' @importFrom mclust Mclust
 #' 
@@ -46,20 +49,20 @@
 
 
 
-mclustRestricted <- function(y, restrict=TRUE, min.size, seed=1){
+mclustRestricted <- function(y, restrict=TRUE, min.size, seed=1, jitter=c(-0.1, 0.1)){
   set.seed(seed)
   
-  # add runif(-0.1,0.1) jitter if all y vals are identical
+  # add jitter if all y vals are identical
   if (length(unique(y))==1){
-    y <- y + runif(length(y), -0.1, 0.1)
+    y <- y + runif(length(y), jitter[1], jitter[2])
   }
   
   mc <- tryCatch({
     mc <- suppressWarnings(Mclust(y, warn=FALSE, modelNames=c("V"), G=1:5, 
                                   verbose=FALSE))
   }, error = function(e) {
-    # add runif(-0.1,0.1) jitter if numerical errors occur with Mclust
-    y <- y + runif(length(y), -0.1, 0.1)
+    # add jitter if numerical errors occur with Mclust
+    y <- y + runif(length(y), jitter[1], jitter[2])
     mc <- suppressWarnings(Mclust(y, warn=FALSE, modelNames=c("V"), G=1:5, 
                                   verbose=FALSE))
     return(list(mc=mc, y=y))
