@@ -357,7 +357,8 @@ feDP <- function(pe_mat, condition, sig_genes, oa, c1, c2, log.nonzero=TRUE,
       c.c2.no <- findOutliers(c2[[g]], min.size)
       
       test <- 1*(fisher.test(table(oa[[g]][oa[[g]] %in% c.oa.no], 
-                                   cond[oa[[g]] %in% c.oa.no]))$p.value < 0.05)
+                                   cond[oa[[g]] %in% c.oa.no]),
+                             workspace=2e8)$p.value < 0.05)
       if (test==1){
         cat[s] <- "DP"
       }else{
